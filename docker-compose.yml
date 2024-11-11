@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15.2
+    container_name: db
+    environment:
+      - POSTGRES_USER=catname
+      - POSTGRES_PASSWORD=catpass
+      - POSTGRES_DB=cat
+    ports:
+      - "5432:5432"
+  cat_service:
+    image: annstase/hw3_cat_service
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url"  : "jdbc:postgresql://db:5432/cat",
+        "spring.datasource.username" : "catname",
+        "spring.datasource.password" : "catpass",
+        "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.PostgreSQLDialect",
+        "spring.jpa.hibernate.ddl-auto" : "update",
+        "server.port": 8087
+      }'
+    depends_on:
+      - db
+    ports:
+      - "8087:8087"
